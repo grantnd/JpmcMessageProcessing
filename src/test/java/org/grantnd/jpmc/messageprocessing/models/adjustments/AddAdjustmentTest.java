@@ -9,12 +9,12 @@ import static org.junit.Assert.assertEquals;
 
 public class AddAdjustmentTest {
     @Test(expected = IllegalArgumentException.class)
-    public void construct_productNameIsNull_throwsException() {
+    public void construct_productTypeIsNull_throwsException() {
         new AddAdjustment(null, BigDecimal.ONE);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void construct_productNameIsBlank_throwsException() {
+    public void construct_productTypeIsBlank_throwsException() {
         new AddAdjustment("", BigDecimal.ONE);
     }
 

@@ -1,7 +1,7 @@
 package org.grantnd.jpmc.messageprocessing.reports.adjustments;
 
 import org.grantnd.jpmc.messageprocessing.models.adjustments.Adjustment;
-import org.grantnd.jpmc.messageprocessing.repository.AdjustmentsRepository;
+import org.grantnd.jpmc.messageprocessing.repositories.AdjustmentRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,18 +9,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AdjustmentsReport {
-    private final AdjustmentsRepository adjustmentsRepository;
+    private final AdjustmentRepository adjustmentRepository;
     private final Map<String, List<ReportLine>> linesGroupedByProductType;
 
-    public AdjustmentsReport(AdjustmentsRepository adjustmentsRepository) {
-        this.adjustmentsRepository = adjustmentsRepository;
+    public AdjustmentsReport(AdjustmentRepository adjustmentRepository) {
+        this.adjustmentRepository = adjustmentRepository;
         this.linesGroupedByProductType = buildReport();
     }
 
     public Map<String, List<ReportLine>> buildReport() {
         Map<String, List<ReportLine>> linesGroupedByProductType = new HashMap<>();
 
-        for (Map.Entry<String, List<Adjustment>> entry : adjustmentsRepository.getAdjustmentsGroupedByProductType().entrySet()) {
+        for (Map.Entry<String, List<Adjustment>> entry : adjustmentRepository.getAdjustmentsGroupedByProductType().entrySet()) {
             linesGroupedByProductType.put(
                     entry.getKey(),
                     buildReportLinesForAdjustmentsGroupedByProductType(entry.getValue()));

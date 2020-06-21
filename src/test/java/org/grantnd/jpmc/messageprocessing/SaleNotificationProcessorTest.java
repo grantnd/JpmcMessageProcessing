@@ -7,8 +7,8 @@ import org.grantnd.jpmc.messageprocessing.notifications.models.SaleNotification;
 import org.grantnd.jpmc.messageprocessing.notifications.models.adjustmentoperations.AddAdjustmentOperation;
 import org.grantnd.jpmc.messageprocessing.reports.adjustments.AdjustmentsReportWriter;
 import org.grantnd.jpmc.messageprocessing.reports.sales.SalesReportWriter;
-import org.grantnd.jpmc.messageprocessing.repository.AdjustmentsRepository;
-import org.grantnd.jpmc.messageprocessing.repository.SalesRepository;
+import org.grantnd.jpmc.messageprocessing.repositories.AdjustmentRepository;
+import org.grantnd.jpmc.messageprocessing.repositories.SaleRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class SaleNotificationProcessorTest {
     @Mock
-    private SalesRepository salesRepository;
+    private SaleRepository saleRepository;
 
     @Mock
     private SalesReportWriter salesReportWriter;
@@ -33,7 +33,7 @@ public class SaleNotificationProcessorTest {
     private AdjustmentFactory adjustmentFactory;
 
     @Mock
-    private AdjustmentsRepository adjustmentsRepository;
+    private AdjustmentRepository adjustmentRepository;
 
     @Mock
     private AdjustmentsReportWriter adjustmentsReportWriter;
@@ -42,21 +42,21 @@ public class SaleNotificationProcessorTest {
 
     @Before
     public void setUp() {
-        target = new SaleNotificationProcessor(salesRepository, salesReportWriter, adjustmentFactory, adjustmentsRepository, adjustmentsReportWriter);
+        target = new SaleNotificationProcessor(saleRepository, salesReportWriter, adjustmentFactory, adjustmentRepository, adjustmentsReportWriter);
     }
 
     @Test
     public void handleSaleNotification_oneNotification_saleRecorded() {
         callHandleSaleNotificationNTimes(1);
 
-        verify(salesRepository, times(1)).add(any());
+        verify(saleRepository, times(1)).add(any());
     }
 
     @Test
     public void handleSaleNotification_multipleNotifications_allSalesRecorded() {
         callHandleSaleNotificationNTimes(5);
 
-        verify(salesRepository, times(5)).add(any());
+        verify(saleRepository, times(5)).add(any());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class SaleNotificationProcessorTest {
 
         target.handleSaleNotification(saleNotificationWithAdjustment);
 
-        verify(salesRepository, times(1)).applyAdjustment(adjustment);
+        verify(saleRepository, times(1)).applyAdjustment(adjustment);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class SaleNotificationProcessorTest {
 
         target.handleSaleNotification(createSaleNotificationWithMultipleOccurrence("Apple", BigDecimal.ONE, 4));
 
-        verify(salesRepository, times(9)).add(any());
+        verify(saleRepository, times(9)).add(any());
     }
 
     @Test
@@ -103,7 +103,7 @@ public class SaleNotificationProcessorTest {
 
     @Test
     public void handleSaleNotification_receiveFiftyNotifications_adjustmentReportWrittenAndProcessingPaused() {
-        NonHaltingSaleNotificationProcessor nonHaltingTarget = new NonHaltingSaleNotificationProcessor(salesRepository, salesReportWriter, adjustmentFactory, adjustmentsRepository, adjustmentsReportWriter);
+        NonHaltingSaleNotificationProcessor nonHaltingTarget = new NonHaltingSaleNotificationProcessor(saleRepository, salesReportWriter, adjustmentFactory, adjustmentRepository, adjustmentsReportWriter);
         callHandleSaleNotificationNTimes(50, nonHaltingTarget);
 
         verify(salesReportWriter, times(5)).writeSalesReport(any());
@@ -124,8 +124,8 @@ public class SaleNotificationProcessorTest {
     private static class NonHaltingSaleNotificationProcessor extends SaleNotificationProcessor {
         private boolean processingWasPaused;
 
-        public NonHaltingSaleNotificationProcessor(SalesRepository salesRepository, SalesReportWriter salesReportWriter, AdjustmentFactory adjustmentFactory, AdjustmentsRepository adjustmentsRepository, AdjustmentsReportWriter adjustmentsReportWriter) {
-            super(salesRepository, salesReportWriter, adjustmentFactory, adjustmentsRepository, adjustmentsReportWriter);
+        public NonHaltingSaleNotificationProcessor(SaleRepository saleRepository, SalesReportWriter salesReportWriter, AdjustmentFactory adjustmentFactory, AdjustmentRepository adjustmentRepository, AdjustmentsReportWriter adjustmentsReportWriter) {
+            super(saleRepository, salesReportWriter, adjustmentFactory, adjustmentRepository, adjustmentsReportWriter);
         }
 
         @Override

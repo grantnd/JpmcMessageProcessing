@@ -10,8 +10,8 @@ import org.grantnd.jpmc.messageprocessing.notifications.producer.InMemorySaleNot
 import org.grantnd.jpmc.messageprocessing.notifications.producer.SaleNotificationProducer;
 import org.grantnd.jpmc.messageprocessing.reports.adjustments.AdjustmentsReportWriter;
 import org.grantnd.jpmc.messageprocessing.reports.sales.SalesReportWriter;
-import org.grantnd.jpmc.messageprocessing.repository.AdjustmentsRepository;
-import org.grantnd.jpmc.messageprocessing.repository.SalesRepository;
+import org.grantnd.jpmc.messageprocessing.repositories.AdjustmentRepository;
+import org.grantnd.jpmc.messageprocessing.repositories.SaleRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,17 +29,17 @@ public class App {
     }
 
     private static SaleNotificationConsumer composeNotificationConsumer() {
-        SalesRepository salesRepository = new SalesRepository();
+        SaleRepository saleRepository = new SaleRepository();
         SalesReportWriter salesReportWriter = new SalesReportWriter();
 
         AdjustmentFactory adjustmentFactory = new AdjustmentFactory();
-        AdjustmentsRepository adjustmentsRepository = new AdjustmentsRepository();
+        AdjustmentRepository adjustmentRepository = new AdjustmentRepository();
         AdjustmentsReportWriter adjustmentsReportWriter = new AdjustmentsReportWriter();
 
-        return new SaleNotificationProcessor(salesRepository,
+        return new SaleNotificationProcessor(saleRepository,
                 salesReportWriter,
                 adjustmentFactory,
-                adjustmentsRepository,
+                adjustmentRepository,
                 adjustmentsReportWriter);
     }
 

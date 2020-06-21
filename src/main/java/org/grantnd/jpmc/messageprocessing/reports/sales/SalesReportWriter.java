@@ -14,7 +14,7 @@ public class SalesReportWriter {
             reportBuilder.append("No sales to report\n");
         } else {
             appendHeader(reportBuilder);
-            List<SalesReport.ReportLine> reportLines = sortReportLinesByProductName(salesReport.getLines());
+            List<SalesReport.ReportLine> reportLines = sortReportLinesByProductType(salesReport.getLines());
             appendReportLines(reportBuilder, reportLines);
         }
 
@@ -32,7 +32,7 @@ public class SalesReportWriter {
         reportBuilder.append("Total\n");
     }
 
-    private List<SalesReport.ReportLine> sortReportLinesByProductName(List<SalesReport.ReportLine> lines) {
+    private List<SalesReport.ReportLine> sortReportLinesByProductType(List<SalesReport.ReportLine> lines) {
         return lines.stream()
                 .sorted(comparing(SalesReport.ReportLine::getProductType))
                 .collect(Collectors.toList());

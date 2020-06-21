@@ -8,12 +8,12 @@ import static org.junit.Assert.assertEquals;
 
 public class SaleTest {
     @Test(expected = IllegalArgumentException.class)
-    public void construct_productNameIsNull_throwsException() {
+    public void construct_productTypeIsNull_throwsException() {
         new Sale(null, BigDecimal.ONE);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void construct_productNameIsBlank_throwsException() {
+    public void construct_productTypeIsBlank_throwsException() {
         new Sale("", BigDecimal.ONE);
     }
 
@@ -23,7 +23,7 @@ public class SaleTest {
     }
 
     @Test
-    public void construct_productNameAndValueStored() {
+    public void construct_productTypeAndValueStored() {
         Sale sale = new Sale("Apple", BigDecimal.ZERO);
 
         assertEquals("Apple", sale.getProductType());

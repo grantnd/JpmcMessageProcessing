@@ -1,4 +1,4 @@
-package org.grantnd.jpmc.messageprocessing.repository;
+package org.grantnd.jpmc.messageprocessing.repositories;
 
 import org.grantnd.jpmc.messageprocessing.models.Sale;
 import org.grantnd.jpmc.messageprocessing.models.adjustments.Adjustment;
@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class SalesRepository {
+public class SaleRepository {
     private final List<Sale> sales;
 
-    public SalesRepository() {
+    public SaleRepository() {
         this.sales = new ArrayList<>();
     }
 

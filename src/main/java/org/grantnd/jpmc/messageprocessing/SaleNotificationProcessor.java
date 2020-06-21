@@ -10,8 +10,8 @@ import org.grantnd.jpmc.messageprocessing.reports.adjustments.AdjustmentsReport;
 import org.grantnd.jpmc.messageprocessing.reports.adjustments.AdjustmentsReportWriter;
 import org.grantnd.jpmc.messageprocessing.reports.sales.SalesReport;
 import org.grantnd.jpmc.messageprocessing.reports.sales.SalesReportWriter;
-import org.grantnd.jpmc.messageprocessing.repository.AdjustmentsRepository;
-import org.grantnd.jpmc.messageprocessing.repository.SalesRepository;
+import org.grantnd.jpmc.messageprocessing.repositories.AdjustmentRepository;
+import org.grantnd.jpmc.messageprocessing.repositories.SaleRepository;
 
 import java.io.IOException;
 
@@ -19,23 +19,23 @@ public class SaleNotificationProcessor implements SaleNotificationConsumer {
     private static final int REPORT_INTERVAL_SALES = 10;
     private static final int REPORT_INTERVAL_ADJUSTMENTS = 50;
 
-    private final SalesRepository salesRepository;
+    private final SaleRepository saleRepository;
     private final SalesReportWriter salesReportWriter;
     private final AdjustmentFactory adjustmentFactory;
-    private final AdjustmentsRepository adjustmentsRepository;
+    private final AdjustmentRepository adjustmentRepository;
     private final AdjustmentsReportWriter adjustmentsReportWriter;
 
     private int numberOfNotificationsProcessed = 0;
 
-    public SaleNotificationProcessor(SalesRepository salesRepository,
+    public SaleNotificationProcessor(SaleRepository saleRepository,
                                      SalesReportWriter salesReportWriter,
                                      AdjustmentFactory adjustmentFactory,
-                                     AdjustmentsRepository adjustmentsRepository,
+                                     AdjustmentRepository adjustmentRepository,
                                      AdjustmentsReportWriter adjustmentsReportWriter) {
-        this.salesRepository = salesRepository;
+        this.saleRepository = saleRepository;
         this.salesReportWriter = salesReportWriter;
         this.adjustmentFactory = adjustmentFactory;
-        this.adjustmentsRepository = adjustmentsRepository;
+        this.adjustmentRepository = adjustmentRepository;
         this.adjustmentsReportWriter = adjustmentsReportWriter;
     }
 
@@ -55,26 +55,34 @@ public class SaleNotificationProcessor implements SaleNotificationConsumer {
     private void storeSalesFromNotification(SaleNotification saleNotification) {
         for (int i = 0; i < saleNotification.getOccurrences(); i++) {
             Sale sale = new Sale(saleNotification.getProductType(), saleNotification.getValue());
-            salesRepository.add(sale);
+            saleRepository.add(sale);
         }
     }
 
     private void handleAdjustmentOperation(AdjustmentOperation adjustmentOperation) {
         Adjustment adjustment = adjustmentFactory.createAdjustmentFromAdjustmentOperation(adjustmentOperation);
-        adjustmentsRepository.add(adjustment);
-        salesRepository.applyAdjustment(adjustment);
+        adjustmentRepository.add(adjustment);
+        saleRepository.applyAdjustment(adjustment);
     }
 
     private void writeReports() {
-        if (numberOfNotificationsProcessed % REPORT_INTERVAL_SALES == 0) {
-            salesReportWriter.writeSalesReport(new SalesReport(salesRepository));
+        if (shouldWriteSalesReport()) {
+            salesReportWriter.writeSalesReport(new SalesReport(saleRepository));
         }
 
-        if (numberOfNotificationsProcessed % REPORT_INTERVAL_ADJUSTMENTS == 0) {
+        if (shouldWriteAdjustmentReportAndPause()) {
             System.out.println("Pausing application...");
-            adjustmentsReportWriter.writeAdjustmentsReport(new AdjustmentsReport(adjustmentsRepository));
+            adjustmentsReportWriter.writeAdjustmentsReport(new AdjustmentsReport(adjustmentRepository));
             pauseProcessing();
         }
+    }
+
+    private boolean shouldWriteSalesReport() {
+        return numberOfNotificationsProcessed % REPORT_INTERVAL_SALES == 0;
+    }
+
+    private boolean shouldWriteAdjustmentReportAndPause() {
+        return numberOfNotificationsProcessed % REPORT_INTERVAL_ADJUSTMENTS == 0;
     }
 
     protected void pauseProcessing() {

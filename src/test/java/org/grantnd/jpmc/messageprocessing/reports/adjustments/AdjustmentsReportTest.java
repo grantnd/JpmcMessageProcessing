@@ -4,7 +4,7 @@ import org.grantnd.jpmc.messageprocessing.models.adjustments.AddAdjustment;
 import org.grantnd.jpmc.messageprocessing.models.adjustments.Adjustment;
 import org.grantnd.jpmc.messageprocessing.models.adjustments.MultiplyAdjustment;
 import org.grantnd.jpmc.messageprocessing.models.adjustments.SubtractAdjustment;
-import org.grantnd.jpmc.messageprocessing.repository.AdjustmentsRepository;
+import org.grantnd.jpmc.messageprocessing.repositories.AdjustmentRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -23,12 +23,12 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AdjustmentsReportTest {
     @Mock
-    private AdjustmentsRepository adjustmentsRepository;
+    private AdjustmentRepository adjustmentRepository;
 
     @Test
     public void getLinesGroupedByProductType_noAdjustments_emptyReport() {
-        when(adjustmentsRepository.getAdjustmentsGroupedByProductType()).thenReturn(new HashMap<>());
-        AdjustmentsReport adjustmentsReport = new AdjustmentsReport(adjustmentsRepository);
+        when(adjustmentRepository.getAdjustmentsGroupedByProductType()).thenReturn(new HashMap<>());
+        AdjustmentsReport adjustmentsReport = new AdjustmentsReport(adjustmentRepository);
 
         Map<String, List<AdjustmentsReport.ReportLine>> linesGroupedByProductType = adjustmentsReport.getLinesGroupedByProductType();
 
@@ -38,8 +38,8 @@ public class AdjustmentsReportTest {
     @Test
     public void getLinesGroupedByProductType_multipleAdjustments_groupedCorrectly() {
         Map<String, List<Adjustment>> adjustmentsByProductType = buildAdjustmentsByProductType();
-        when(adjustmentsRepository.getAdjustmentsGroupedByProductType()).thenReturn(adjustmentsByProductType);
-        AdjustmentsReport adjustmentsReport = new AdjustmentsReport(adjustmentsRepository);
+        when(adjustmentRepository.getAdjustmentsGroupedByProductType()).thenReturn(adjustmentsByProductType);
+        AdjustmentsReport adjustmentsReport = new AdjustmentsReport(adjustmentRepository);
 
         Map<String, List<AdjustmentsReport.ReportLine>> linesGroupedByProductType = adjustmentsReport.getLinesGroupedByProductType();
 

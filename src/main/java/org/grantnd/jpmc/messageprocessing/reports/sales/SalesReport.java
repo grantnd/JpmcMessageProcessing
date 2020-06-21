@@ -1,7 +1,7 @@
 package org.grantnd.jpmc.messageprocessing.reports.sales;
 
 import org.grantnd.jpmc.messageprocessing.models.Sale;
-import org.grantnd.jpmc.messageprocessing.repository.SalesRepository;
+import org.grantnd.jpmc.messageprocessing.repositories.SaleRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -9,18 +9,18 @@ import java.util.List;
 import java.util.Map;
 
 public class SalesReport {
-    private final SalesRepository salesRepository;
+    private final SaleRepository saleRepository;
     private final List<ReportLine> lines;
 
-    public SalesReport(SalesRepository salesRepository) {
-        this.salesRepository = salesRepository;
+    public SalesReport(SaleRepository saleRepository) {
+        this.saleRepository = saleRepository;
         this.lines = buildReport();
     }
 
     private List<ReportLine> buildReport() {
         List<ReportLine> lines = new ArrayList<>();
 
-        for (Map.Entry<String, List<Sale>> entry : salesRepository.getSalesGroupedByProductType().entrySet()) {
+        for (Map.Entry<String, List<Sale>> entry : saleRepository.getSalesGroupedByProductType().entrySet()) {
             lines.add(buildReportLineForSalesGroupedByProductType(entry));
         }
 

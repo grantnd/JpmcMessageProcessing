@@ -1,7 +1,7 @@
 package org.grantnd.jpmc.messageprocessing.reports.sales;
 
 import org.grantnd.jpmc.messageprocessing.models.Sale;
-import org.grantnd.jpmc.messageprocessing.repository.SalesRepository;
+import org.grantnd.jpmc.messageprocessing.repositories.SaleRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -16,12 +16,12 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SalesReportTest {
     @Mock
-    private SalesRepository salesRepository;
+    private SaleRepository saleRepository;
 
     @Test
     public void getLines_noSales_emptyReport() {
-        when(salesRepository.getSalesGroupedByProductType()).thenReturn(new HashMap<>());
-        SalesReport salesReport = new SalesReport(salesRepository);
+        when(saleRepository.getSalesGroupedByProductType()).thenReturn(new HashMap<>());
+        SalesReport salesReport = new SalesReport(saleRepository);
 
         List<SalesReport.ReportLine> lines = salesReport.getLines();
 
@@ -31,8 +31,8 @@ public class SalesReportTest {
     @Test
     public void getLines_multipleSales_countAndTotalValuesAreCorrect() {
         Map<String, List<Sale>> salesByProductType = buildSalesByProductType();
-        when(salesRepository.getSalesGroupedByProductType()).thenReturn(salesByProductType);
-        SalesReport salesReport = new SalesReport(salesRepository);
+        when(saleRepository.getSalesGroupedByProductType()).thenReturn(salesByProductType);
+        SalesReport salesReport = new SalesReport(saleRepository);
 
         List<SalesReport.ReportLine> lines = salesReport.getLines();
 

@@ -1,8 +1,0 @@
-validate test output
-design pass
-Anna review
-finish readme
-    ## Areas for improvement
-    * Not happy with use of Adjustment toString in reporting
-    * Lack of automated functional testing
-
