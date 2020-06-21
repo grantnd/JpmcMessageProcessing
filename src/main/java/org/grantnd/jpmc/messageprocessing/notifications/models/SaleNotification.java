@@ -1,4 +1,6 @@
-package org.grantnd.jpmc.messageprocessing.notifications;
+package org.grantnd.jpmc.messageprocessing.notifications.models;
+
+import org.grantnd.jpmc.messageprocessing.notifications.models.adjustmentoperations.AdjustmentOperation;
 
 import java.math.BigDecimal;
 
@@ -9,31 +11,10 @@ public class SaleNotification {
     private final AdjustmentOperation adjustmentOperation;
 
     private SaleNotification(String productType, BigDecimal value, int occurrences, AdjustmentOperation adjustmentOperation) {
-        this.productType = validateProductType(productType);
-        this.value = validateValue(value);
-        this.occurrences = validateOccurrences(occurrences);
+        this.productType = productType;
+        this.value = value;
+        this.occurrences = occurrences;
         this.adjustmentOperation = adjustmentOperation;
-    }
-
-    private String validateProductType(String productType) {
-        if(productType == null || productType.equals(""))
-            throw new IllegalArgumentException("Product type must not be null or empty");
-
-        return productType;
-    }
-
-    private BigDecimal validateValue(BigDecimal value) {
-        if(value.compareTo(BigDecimal.ZERO) < 0)
-            throw new IllegalArgumentException("Value must not be negative");
-
-        return value;
-    }
-
-    private int validateOccurrences(int occurrences) {
-        if(occurrences < 1)
-            throw new IllegalArgumentException("Occurrences must be greater than 0");
-
-        return occurrences;
     }
 
     public String getProductType() {

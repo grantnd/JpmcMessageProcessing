@@ -1,130 +1,50 @@
 package org.grantnd.jpmc.messageprocessing.notifications;
 
+import org.grantnd.jpmc.messageprocessing.notifications.models.SaleNotification;
+import org.grantnd.jpmc.messageprocessing.notifications.models.adjustmentoperations.AddAdjustmentOperation;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 
-import static org.grantnd.jpmc.messageprocessing.notifications.SaleNotification.*;
+import static org.grantnd.jpmc.messageprocessing.notifications.models.SaleNotification.*;
 import static org.junit.Assert.*;
 
 public class SaleNotificationTest {
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotification_nullProductType_throwsException() {
-        createSaleNotification(null, BigDecimal.ONE);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotification_emptyProductType_throwsException() {
-        createSaleNotification("", BigDecimal.ONE);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotification_negativeValue_throwsException() {
-        createSaleNotification("Apple", new BigDecimal(-1));
-    }
 
     @Test
-    public void createSaleNotification_productTypeStored() {
+    public void createSaleNotification_valuesStored() {
         SaleNotification saleNotification = createSaleNotification("Apple", BigDecimal.ONE);
 
         assertEquals("Apple", saleNotification.getProductType());
-    }
-
-    @Test
-    public void createSaleNotification_valueStored() {
-        SaleNotification saleNotification = createSaleNotification("Apple", BigDecimal.ONE);
-
         assertEquals(BigDecimal.ONE, saleNotification.getValue());
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotificationWithMultipleOccurrence_nullProductType_throwsException() {
-        createSaleNotificationWithMultipleOccurrence(null, BigDecimal.ONE, 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotificationWithMultipleOccurrence_emptyProductType_throwsException() {
-        createSaleNotificationWithMultipleOccurrence("", BigDecimal.ONE, 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotificationWithMultipleOccurrence_negativeValue_throwsException() {
-        createSaleNotificationWithMultipleOccurrence("Apple", new BigDecimal(-1), 1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotificationWithMultipleOccurrence_negativeOccurrence_throwsException() {
-        createSaleNotificationWithMultipleOccurrence("Apple", BigDecimal.ONE, -1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotificationWithMultipleOccurrence_zeroOccurrence_throwsException() {
-        createSaleNotificationWithMultipleOccurrence("Apple", BigDecimal.ONE, 0);
-    }
-
-    @Test
-    public void createSaleNotificationWithMultipleOccurrence_productTypeStored() {
-        SaleNotification saleNotification = createSaleNotificationWithMultipleOccurrence("Apple", BigDecimal.ONE, 1);
-
-        assertEquals("Apple", saleNotification.getProductType());
-    }
-
-    @Test
-    public void createSaleNotificationWithMultipleOccurrence_valueStored() {
-        SaleNotification saleNotification = createSaleNotificationWithMultipleOccurrence("Apple", BigDecimal.ONE, 1);
-
-        assertEquals(BigDecimal.ONE, saleNotification.getValue());
-    }
-
-    @Test
-    public void createSaleNotificationWithMultipleOccurrence_occurrenceStored() {
-        SaleNotification saleNotification = createSaleNotificationWithMultipleOccurrence("Apple", BigDecimal.ONE, 1);
-
         assertEquals(1, saleNotification.getOccurrences());
     }
 
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotificationWithAdjustment_nullProductType_throwsException() {
-        createSaleNotificationWithAdjustment(null, BigDecimal.ONE, AdjustmentOperation.Add);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotificationWithAdjustment_emptyProductType_throwsException() {
-        createSaleNotificationWithAdjustment("", BigDecimal.ONE, AdjustmentOperation.Add);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void createSaleNotificationWithAdjustment_negativeValue_throwsException() {
-        createSaleNotificationWithAdjustment("Apple", new BigDecimal(-1), AdjustmentOperation.Add);
-    }
-
     @Test
-    public void createSaleNotificationWithAdjustment_productTypeStored() {
-        SaleNotification saleNotification = createSaleNotificationWithAdjustment("Apple", BigDecimal.ONE, AdjustmentOperation.Add);
+    public void createSaleNotificationWithMultipleOccurrence_valuesStored() {
+        SaleNotification saleNotification = createSaleNotificationWithMultipleOccurrence("Apple", BigDecimal.ONE, 3);
 
         assertEquals("Apple", saleNotification.getProductType());
-    }
-
-    @Test
-    public void createSaleNotificationWithAdjustment_valueStored() {
-        SaleNotification saleNotification = createSaleNotificationWithAdjustment("Apple", BigDecimal.ONE, AdjustmentOperation.Add);
-
         assertEquals(BigDecimal.ONE, saleNotification.getValue());
+        assertEquals(3, saleNotification.getOccurrences());
+        assertNull(saleNotification.getAdjustmentOperation());
     }
 
     @Test
-    public void createSaleNotificationWithAdjustment_adjustmentOperationStored() {
-        SaleNotification saleNotification = createSaleNotificationWithAdjustment("Apple", BigDecimal.ONE, AdjustmentOperation.Add);
+    public void createSaleNotificationWithAdjustment_valuesStored() {
+        AddAdjustmentOperation adjustmentOperation = new AddAdjustmentOperation("Apple", new BigDecimal("2"));
+        SaleNotification saleNotification = createSaleNotificationWithAdjustment("Apple", BigDecimal.ONE, adjustmentOperation);
 
-        assertEquals( AdjustmentOperation.Add, saleNotification.getAdjustmentOperation());
+        assertEquals("Apple", saleNotification.getProductType());
+        assertEquals(BigDecimal.ONE, saleNotification.getValue());
+        assertEquals(1, saleNotification.getOccurrences());
+        assertEquals(adjustmentOperation, saleNotification.getAdjustmentOperation());
     }
-
 
     @Test
     public void hasAdjustmentOperation_hasAdjustment_returnsTrue() {
-        SaleNotification saleNotificationWithAdjustment = createSaleNotificationWithAdjustment("Apple", BigDecimal.ONE, AdjustmentOperation.Add);
+        SaleNotification saleNotificationWithAdjustment = createSaleNotificationWithAdjustment("Apple", BigDecimal.ONE,
+                new AddAdjustmentOperation("Apple", new BigDecimal("2")));
 
         assertTrue(saleNotificationWithAdjustment.hasAdjustmentOperation());
     }

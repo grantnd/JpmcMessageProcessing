@@ -1,14 +1,19 @@
 package org.grantnd.jpmc.messageprocessing;
 
-import org.grantnd.jpmc.messageprocessing.models.Adjustment;
-import org.grantnd.jpmc.messageprocessing.models.adjustments.AdjustmentFactory;
 import org.grantnd.jpmc.messageprocessing.models.Sale;
-import org.grantnd.jpmc.messageprocessing.notifications.SaleNotification;
+import org.grantnd.jpmc.messageprocessing.models.adjustments.Adjustment;
+import org.grantnd.jpmc.messageprocessing.models.adjustments.AdjustmentFactory;
 import org.grantnd.jpmc.messageprocessing.notifications.consumer.SaleNotificationConsumer;
-import org.grantnd.jpmc.messageprocessing.reports.adjustments.AdjustmentReportWriter;
+import org.grantnd.jpmc.messageprocessing.notifications.models.SaleNotification;
+import org.grantnd.jpmc.messageprocessing.notifications.models.adjustmentoperations.AdjustmentOperation;
+import org.grantnd.jpmc.messageprocessing.reports.adjustments.AdjustmentsReport;
+import org.grantnd.jpmc.messageprocessing.reports.adjustments.AdjustmentsReportWriter;
+import org.grantnd.jpmc.messageprocessing.reports.sales.SalesReport;
 import org.grantnd.jpmc.messageprocessing.reports.sales.SalesReportWriter;
-import org.grantnd.jpmc.messageprocessing.repository.AdjustmentRepository;
+import org.grantnd.jpmc.messageprocessing.repository.AdjustmentsRepository;
 import org.grantnd.jpmc.messageprocessing.repository.SalesRepository;
+
+import java.io.IOException;
 
 public class SaleNotificationProcessor implements SaleNotificationConsumer {
     private static final int REPORT_INTERVAL_SALES = 10;
@@ -17,21 +22,21 @@ public class SaleNotificationProcessor implements SaleNotificationConsumer {
     private final SalesRepository salesRepository;
     private final SalesReportWriter salesReportWriter;
     private final AdjustmentFactory adjustmentFactory;
-    private final AdjustmentRepository adjustmentRepository;
-    private final AdjustmentReportWriter adjustmentReportWriter;
+    private final AdjustmentsRepository adjustmentsRepository;
+    private final AdjustmentsReportWriter adjustmentsReportWriter;
 
     private int numberOfNotificationsProcessed = 0;
 
     public SaleNotificationProcessor(SalesRepository salesRepository,
                                      SalesReportWriter salesReportWriter,
                                      AdjustmentFactory adjustmentFactory,
-                                     AdjustmentRepository adjustmentRepository,
-                                     AdjustmentReportWriter adjustmentReportWriter) {
+                                     AdjustmentsRepository adjustmentsRepository,
+                                     AdjustmentsReportWriter adjustmentsReportWriter) {
         this.salesRepository = salesRepository;
         this.salesReportWriter = salesReportWriter;
         this.adjustmentFactory = adjustmentFactory;
-        this.adjustmentRepository = adjustmentRepository;
-        this.adjustmentReportWriter = adjustmentReportWriter;
+        this.adjustmentsRepository = adjustmentsRepository;
+        this.adjustmentsReportWriter = adjustmentsReportWriter;
     }
 
     @Override
@@ -39,7 +44,7 @@ public class SaleNotificationProcessor implements SaleNotificationConsumer {
         storeSalesFromNotification(saleNotification);
 
         if (saleNotification.hasAdjustmentOperation()) {
-            handleAdjustment(saleNotification);
+            handleAdjustmentOperation(saleNotification.getAdjustmentOperation());
         }
 
         numberOfNotificationsProcessed++;
@@ -54,19 +59,30 @@ public class SaleNotificationProcessor implements SaleNotificationConsumer {
         }
     }
 
-    private void handleAdjustment(SaleNotification saleNotification) {
-        Adjustment adjustment = adjustmentFactory.getAdjustmentFromSaleNotification(saleNotification);
-        adjustmentRepository.add(adjustment);
+    private void handleAdjustmentOperation(AdjustmentOperation adjustmentOperation) {
+        Adjustment adjustment = adjustmentFactory.createAdjustmentFromAdjustmentOperation(adjustmentOperation);
+        adjustmentsRepository.add(adjustment);
         salesRepository.applyAdjustment(adjustment);
     }
 
     private void writeReports() {
         if (numberOfNotificationsProcessed % REPORT_INTERVAL_SALES == 0) {
-            salesReportWriter.writeSalesNumberAndTotalByProductTypeReport();
+            salesReportWriter.writeSalesReport(new SalesReport(salesRepository));
         }
 
         if (numberOfNotificationsProcessed % REPORT_INTERVAL_ADJUSTMENTS == 0) {
-            adjustmentReportWriter.writeAdjustmentsByProductTypeReport();
+            System.out.println("Pausing application...");
+            adjustmentsReportWriter.writeAdjustmentsReport(new AdjustmentsReport(adjustmentsRepository));
+            pauseProcessing();
+        }
+    }
+
+    protected void pauseProcessing() {
+        System.out.print("Press any key to continue: ");
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

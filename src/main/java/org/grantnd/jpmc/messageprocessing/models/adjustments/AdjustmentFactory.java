@@ -1,19 +1,19 @@
 package org.grantnd.jpmc.messageprocessing.models.adjustments;
 
-import org.grantnd.jpmc.messageprocessing.models.Adjustment;
-import org.grantnd.jpmc.messageprocessing.notifications.SaleNotification;
+import org.grantnd.jpmc.messageprocessing.notifications.models.adjustmentoperations.AddAdjustmentOperation;
+import org.grantnd.jpmc.messageprocessing.notifications.models.adjustmentoperations.AdjustmentOperation;
+import org.grantnd.jpmc.messageprocessing.notifications.models.adjustmentoperations.MultiplyAdjustmentOperation;
+import org.grantnd.jpmc.messageprocessing.notifications.models.adjustmentoperations.SubtractAdjustmentOperation;
 
 public class AdjustmentFactory {
-    public Adjustment getAdjustmentFromSaleNotification(SaleNotification saleNotification) {
-        switch (saleNotification.getAdjustmentOperation()) {
-            case Add:
-                return new AddAdjustment(saleNotification.getProductType(), saleNotification.getValue());
-            case Subtract:
-                return new SubtractAdjustment(saleNotification.getProductType(), saleNotification.getValue());
-            case Multiply:
-                return new MultiplyAdjustment(saleNotification.getProductType(), 10);
-            default:
-                throw new RuntimeException("Unrecognised adjustment operation");
-        }
+    public Adjustment createAdjustmentFromAdjustmentOperation(AdjustmentOperation adjustmentOperation) {
+        if (adjustmentOperation instanceof AddAdjustmentOperation)
+            return new AddAdjustment(adjustmentOperation.getProductType(), ((AddAdjustmentOperation) adjustmentOperation).getDelta());
+        else if (adjustmentOperation instanceof SubtractAdjustmentOperation)
+            return new SubtractAdjustment(adjustmentOperation.getProductType(), ((SubtractAdjustmentOperation) adjustmentOperation).getDelta());
+        else if (adjustmentOperation instanceof MultiplyAdjustmentOperation)
+            return new MultiplyAdjustment(adjustmentOperation.getProductType(), ((MultiplyAdjustmentOperation) adjustmentOperation).getFactor());
+        else
+            throw new IllegalArgumentException("Unrecognised adjustment operation");
     }
 }

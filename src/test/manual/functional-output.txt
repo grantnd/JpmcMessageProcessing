@@ -1,0 +1,67 @@
+Sales Report
+------------
+Product Type	Count	Total
+Apple	2	0.4
+Grapes	2	14.1
+Orange	2	4.2
+Pear	32	46.8
+Strawberries	1	5.60
+
+Sales Report
+------------
+Product Type	Count	Total
+Apple	6	10.00
+Grapes	2	14.1
+Orange	7	14.9
+Pear	34	49.9
+Strawberries	2	5.80
+
+Sales Report
+------------
+Product Type	Count	Total
+Apple	29	24.30
+Grapes	2	14.1
+Orange	8	22.0
+Pear	35	52.9
+Plum	1	2.1
+Strawberries	9	68.10
+
+Sales Report
+------------
+Product Type	Count	Total
+Apple	30	25.40
+Banana	2	0.8
+Grapes	2	14.1
+Orange	12	94.6
+Pear	40	54.9
+Plum	1	2.1
+Strawberries	11	72.30
+
+Sales Report
+------------
+Product Type	Count	Total
+Apple	31	25.60
+Banana	4	5.50
+Grapes	2	14.1
+Orange	14	98.8
+Pear	42	95.30
+Plum	2	4.2
+Strawberries	13	74.60
+
+Pausing application...
+Adjustments Report
+------------------
+Apple
+	Add 0.25
+	Add 0.1
+Banana
+	Multiply 1.1
+Orange
+	Add 4.2
+Pear
+	Subtract 0.25
+Strawberries
+	Multiply 1.4
+	Subtract 0.1
+
+Press any key to continue:

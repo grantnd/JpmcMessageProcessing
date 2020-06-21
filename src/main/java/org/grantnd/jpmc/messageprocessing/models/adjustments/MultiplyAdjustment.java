@@ -6,12 +6,12 @@ import java.math.BigDecimal;
 
 import static org.grantnd.jpmc.messageprocessing.models.validation.Validate.validateAdjustmentFactor;
 
-public class MultiplyAdjustment extends BaseAdjustment {
+public class MultiplyAdjustment extends Adjustment {
     private final BigDecimal factor;
 
-    public MultiplyAdjustment(String productType, int factor) {
+    public MultiplyAdjustment(String productType, BigDecimal factor) {
         super(productType);
-        this.factor = validateAdjustmentFactor(new BigDecimal(factor));
+        this.factor = validateAdjustmentFactor(factor);
     }
 
     @Override
@@ -21,6 +21,6 @@ public class MultiplyAdjustment extends BaseAdjustment {
 
     @Override
     public String toString() {
-        return "Multiply " + factor.toBigInteger();
+        return "Multiply " + factor;
     }
 }

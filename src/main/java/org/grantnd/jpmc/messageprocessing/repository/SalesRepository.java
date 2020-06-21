@@ -1,10 +1,11 @@
 package org.grantnd.jpmc.messageprocessing.repository;
 
-import org.grantnd.jpmc.messageprocessing.models.Adjustment;
 import org.grantnd.jpmc.messageprocessing.models.Sale;
+import org.grantnd.jpmc.messageprocessing.models.adjustments.Adjustment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SalesRepository {
@@ -34,11 +35,12 @@ public class SalesRepository {
                 .collect(Collectors.toList());
     }
 
-    public List<Sale> getAllSales() {
-        return sales;
+    public Map<String, List<Sale>> getSalesGroupedByProductType() {
+        return sales.stream()
+                .collect(Collectors.groupingBy(Sale::getProductType));
     }
 
-    public boolean hasSales() {
-        return !sales.isEmpty();
+    public List<Sale> getAllSales() {
+        return sales;
     }
 }

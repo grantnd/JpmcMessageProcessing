@@ -25,23 +25,23 @@ public class SubtractAdjustmentTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void construct_deltaIsLessThanZero_throwsException() {
-        new SubtractAdjustment("Apple", new BigDecimal(-1));
+        new SubtractAdjustment("Apple", new BigDecimal("-1"));
     }
 
     @Test
     public void applyToSale_deltaIsSubtractedFromSale() {
-        Sale sale = new Sale("Apple", new BigDecimal(9));
-        SubtractAdjustment adjustment = new SubtractAdjustment("Apple", new BigDecimal(3));
+        Sale sale = new Sale("Apple", new BigDecimal("9"));
+        Adjustment adjustment = new SubtractAdjustment("Apple", new BigDecimal("3"));
 
         adjustment.applyToSale(sale);
 
-        assertEquals(new BigDecimal(6), sale.getValue());
+        assertEquals(new BigDecimal("6"), sale.getValue());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void applyToSale_resultIsNegative_exceptionThrown() {
-        Sale sale = new Sale("Apple", new BigDecimal(9));
-        SubtractAdjustment adjustment = new SubtractAdjustment("Apple", new BigDecimal(28));
+    public void applyToSale_resultIsNegative_throwsException() {
+        Sale sale = new Sale("Apple", new BigDecimal("9"));
+        Adjustment adjustment = new SubtractAdjustment("Apple", new BigDecimal("28"));
 
         adjustment.applyToSale(sale);
     }

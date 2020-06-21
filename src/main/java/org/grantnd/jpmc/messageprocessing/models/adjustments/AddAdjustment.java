@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 import static org.grantnd.jpmc.messageprocessing.models.validation.Validate.validateAdjustmentDelta;
 
-public class AddAdjustment extends BaseAdjustment {
+public class AddAdjustment extends Adjustment {
     private final BigDecimal delta;
 
     public AddAdjustment(String productType, BigDecimal delta) {

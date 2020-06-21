@@ -25,16 +25,16 @@ public class AddAdjustmentTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void construct_deltaIsLessThanZero_throwsException() {
-        new AddAdjustment("Apple", new BigDecimal(-1));
+        new AddAdjustment("Apple", new BigDecimal("-1"));
     }
 
     @Test
     public void applyToSale_deltaIsAddedToSale() {
-        Sale sale = new Sale("Apple", new BigDecimal(4));
-        AddAdjustment adjustment = new AddAdjustment("Apple", new BigDecimal(7));
+        Sale sale = new Sale("Apple", new BigDecimal("4"));
+        Adjustment adjustment = new AddAdjustment("Apple", new BigDecimal("7"));
 
         adjustment.applyToSale(sale);
 
-        assertEquals(new BigDecimal(11), sale.getValue());
+        assertEquals(new BigDecimal("11"), sale.getValue());
     }
 }
