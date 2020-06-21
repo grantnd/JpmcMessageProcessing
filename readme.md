@@ -4,7 +4,7 @@ Developed by Neil Grant
 ## Running the Message Processor
 Requires JVM that can run programs built using JDK 14.0.1
 
-## Functional testing
+## Functional Testing
 Manual functional testing was carried out, app output and worked example can be found in `/src/test/manual/`
 
 ## Interpretation of Requirements
